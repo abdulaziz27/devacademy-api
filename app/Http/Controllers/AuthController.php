@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Google_Client;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
@@ -102,20 +103,29 @@ class AuthController extends Controller
     public function updateProfile(UpdateProfileRequest $request)
     {
         $user = Auth::user();
-        $validated = $request->validated();
+
+        \Log::info('Request data:', [
+            'name' => $request->input('name'),
+            'has_file' => $request->hasFile('avatar'),
+            'all_data' => $request->all()
+        ]);
+
+        if ($request->name) {
+            $user->name = $request->input('name');
+        }
 
         if ($request->hasFile('avatar')) {
             if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }
-            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $request->file('avatar')->store('avatars', 'public');
         }
 
-        $user->update($validated);
+        $user->save();
 
         return response()->json([
             'message' => 'Profile updated successfully',
-            'user' => new UserResource($user)
-        ], 200);
+            'user' => new UserResource($user->fresh())
+        ]);
     }
 }
