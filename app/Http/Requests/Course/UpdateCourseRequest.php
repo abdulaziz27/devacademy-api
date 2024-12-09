@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Course;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateProfileRequest extends FormRequest
+class UpdateCourseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,12 @@ class UpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'nullable|string|max:255',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
+            'title' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
+            'category_id' => 'sometimes|exists:categories,id',
+            'is_premium' => 'sometimes|boolean',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'trailer_url' => 'nullable|url'
         ];
     }
 }

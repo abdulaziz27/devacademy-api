@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+
 
 class AdminController extends Controller
 {
@@ -13,8 +16,7 @@ class AdminController extends Controller
      */
     public function getAllUsers()
     {
-        $users = User::with('roles')->get();
-        return response()->json($users);
+        return UserResource::collection(User::with('roles')->get());
     }
 
     public function deleteUser($id)
@@ -54,7 +56,7 @@ class AdminController extends Controller
 
         return response()->json([
             'message' => 'User promoted to teacher',
-            'user' => $user->load('roles')
+            'user' => new UserResource($user->load('roles'))
         ]);
     }
 }

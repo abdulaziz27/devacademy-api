@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\UpdateProfileRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Google_Client;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -28,7 +34,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Registration successful',
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token
         ], 200);
     }
@@ -44,7 +50,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Login successful',
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token
         ], 200);
     }
@@ -73,7 +79,8 @@ class AuthController extends Controller
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
-                'user' => $user,
+                'message' => 'Login successful',
+                'user' => new UserResource($user),
                 'token' => $token
             ], 200);
         } catch (\Exception $e) {
@@ -89,8 +96,7 @@ class AuthController extends Controller
 
     public function profile()
     {
-        $user = Auth::user()->load('roles');
-        return response()->json($user);
+        return new UserResource(Auth::user()->load('roles'));
     }
 
     public function updateProfile(UpdateProfileRequest $request)
@@ -109,7 +115,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Profile updated successfully',
-            'user' => $user
+            'user' => new UserResource($user)
         ], 200);
     }
 }
