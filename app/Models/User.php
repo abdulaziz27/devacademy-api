@@ -43,4 +43,28 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+    public function subscriptions()
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function lessonProgress()
+    {
+        return $this->hasMany(LessonProgress::class);
+    }
+
+    public function hasActiveSubscription()
+    {
+        return $this->subscriptions()
+            ->where('end_date', '>', now())
+            ->where('is_active', true)
+            ->exists();
+    }
 }

@@ -4,7 +4,10 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\ProgressController;
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +16,10 @@ Route::post('/google-login', [AuthController::class, 'googleLogin']);
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category:slug}', [CategoryController::class, 'show']);
+Route::get('/subscription/plans', [SubscriptionController::class, 'plans']);
+Route::post('/subscription/callback', [SubscriptionController::class, 'handleCallback']);
+
+
 
 Route::middleware('auth:sanctum')->group(function () {
     // Public Course Routes
@@ -26,6 +33,22 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/courses/{course:slug}/lessons', [LessonController::class, 'index']);
     Route::get('/courses/{course:slug}/lessons/{lesson}', [LessonController::class, 'show']);
+
+
+    Route::post('/courses/{course:slug}/enroll', [EnrollmentController::class, 'enroll']);
+    Route::get('/my-courses', [EnrollmentController::class, 'myCourses']);
+    // Route::post('/lessons/{lesson}/complete', [ProgressController::class, 'markAsComplete']);
+    Route::get('/courses/{course:slug}/progress', [ProgressController::class, 'getCourseProgress']);
+
+    Route::post('/lessons/{lesson}/complete', [ProgressController::class, 'markAsComplete'])
+        ->middleware('enrolled');
+
+    Route::post('/subscription/subscribe/{plan}', [SubscriptionController::class, 'subscribe']);
+
+    // Route Testing
+    if (app()->environment('local')) {
+        Route::post('/test/midtrans-signature', [SubscriptionController::class, 'generateTestSignature']);
+    }
 
     // Admin routes
     Route::middleware('role:admin')->group(function () {
