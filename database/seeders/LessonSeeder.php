@@ -17,7 +17,7 @@ class LessonSeeder extends Seeder
         $courses = Course::all();
 
         foreach ($courses as $course) {
-            $lessonCount = rand(5, 8);
+            $lessonCount = rand(1, 2);
 
             for ($i = 1; $i <= $lessonCount; $i++) {
                 $type = ['video', 'text', 'mixed'][rand(0, 2)];
