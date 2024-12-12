@@ -18,6 +18,8 @@ Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category:slug}', [CategoryController::class, 'show']);
 Route::get('/subscription/plans', [SubscriptionController::class, 'plans']);
 Route::post('/subscription/callback', [SubscriptionController::class, 'handleCallback']);
+Route::get('/courses', [CourseController::class, 'index']);
+Route::get('/courses/{course:slug}', [CourseController::class, 'show']);
 
 
 
@@ -27,9 +29,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     // Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::post('/profile/update', [AuthController::class, 'updateProfile']);
-
-    Route::get('/courses', [CourseController::class, 'index']);
-    Route::get('/courses/{course:slug}', [CourseController::class, 'show']);
 
     Route::get('/courses/{course:slug}/lessons', [LessonController::class, 'index']);
     Route::get('/courses/{course:slug}/lessons/{lesson}', [LessonController::class, 'show']);

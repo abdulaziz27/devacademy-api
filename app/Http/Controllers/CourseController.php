@@ -12,22 +12,24 @@ use Illuminate\Support\Facades\Storage;
 
 class CourseController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $courses = Course::with(['teacher', 'category'])
-            ->when(request('category'), function ($q) {
-                return $q->where('category_id', request('category'));
+        $query = Course::with(['teacher', 'category'])
+            ->when($request->search, function ($q) use ($request) {
+                $q->where('title', 'like', "%{$request->search}%")
+                    ->orWhere('description', 'like', "%{$request->search}%");
             })
-            ->when(request('is_premium'), function ($q) {
-                return $q->where('is_premium', request('is_premium'));
+            ->when($request->category, function ($q) use ($request) {
+                $q->where('category_id', $request->category);
             })
-            ->when(request('teacher'), function ($q) {
-                return $q->where('teacher_id', request('teacher'));
+            ->when($request->has('is_premium'), function ($q) use ($request) {
+                $q->where('is_premium', $request->boolean('is_premium'));
             })
-            ->withCount('lessons')
-            ->paginate(10);
+            ->when($request->teacher, function ($q) use ($request) {
+                $q->where('teacher_id', $request->teacher);
+            });
 
-        return CourseResource::collection($courses);
+        return CourseResource::collection($query->paginate(10));
     }
 
     public function store(StoreCourseRequest $request)

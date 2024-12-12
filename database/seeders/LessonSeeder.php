@@ -14,16 +14,24 @@ class LessonSeeder extends Seeder
      */
     public function run()
     {
-        $course = Course::first();
+        $courses = Course::all();
 
-        Lesson::create([
-            'title' => 'Introduction to Laravel',
-            'type' => 'video',
-            'content' => 'Introduction content',
-            'video_url' => 'lessons/intro.mp4',
-            'duration' => 60,
-            'order' => 1,
-            'course_id' => $course->id
-        ]);
+        foreach ($courses as $course) {
+            $lessonCount = rand(5, 8);
+
+            for ($i = 1; $i <= $lessonCount; $i++) {
+                $type = ['video', 'text', 'mixed'][rand(0, 2)];
+
+                Lesson::create([
+                    'title' => "Lesson {$i}: " . fake()->sentence(),
+                    'type' => $type,
+                    'content' => fake()->paragraphs(3, true),
+                    'video_url' => $type !== 'text' ? "lessons/video{$i}.mp4" : null,
+                    'duration' => $type !== 'text' ? rand(15, 60) : null,
+                    'order' => $i,
+                    'course_id' => $course->id
+                ]);
+            }
+        }
     }
 }
