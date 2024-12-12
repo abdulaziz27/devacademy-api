@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\LessonController;
@@ -43,6 +44,12 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware('enrolled');
 
     Route::post('/subscription/subscribe/{plan}', [SubscriptionController::class, 'subscribe']);
+
+
+    // Course Completion and Download Certificate
+    Route::post('/courses/{course:slug}/complete', [EnrollmentController::class, 'completeCourse']);
+    Route::get('/certificates', [CertificateController::class, 'index']);
+    Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download']);
 
     // Route Testing
     if (app()->environment('local')) {

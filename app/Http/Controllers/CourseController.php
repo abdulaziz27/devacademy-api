@@ -29,7 +29,7 @@ class CourseController extends Controller
                 $q->where('teacher_id', $request->teacher);
             });
 
-        return CourseResource::collection($query->paginate(10));
+        return CourseResource::collection($query->paginate(16));
     }
 
     public function store(StoreCourseRequest $request)

@@ -67,4 +67,9 @@ class User extends Authenticatable
             ->where('is_active', true)
             ->exists();
     }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
 }
