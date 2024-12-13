@@ -8,6 +8,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ProgressController;
+use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -50,6 +51,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/courses/{course:slug}/complete', [EnrollmentController::class, 'completeCourse']);
     Route::get('/certificates', [CertificateController::class, 'index']);
     Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download']);
+
+    // Student Dashboard
+    Route::get('/student/dashboard', [StudentDashboardController::class, 'index']);
+    Route::get('/student/courses/{course:slug}/progress', [StudentDashboardController::class, 'courseProgress']);
 
     // Route Testing
     if (app()->environment('local')) {
