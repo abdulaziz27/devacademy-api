@@ -60,6 +60,24 @@ class User extends Authenticatable
         return $this->hasMany(LessonProgress::class);
     }
 
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
+    public function teacherCourses()
+    {
+        return $this->hasMany(Course::class, 'teacher_id');
+    }
+
+    public function enrolledCourses()
+    {
+        return $this->belongsToMany(Course::class, 'enrollments')
+            ->withTimestamps()
+            ->withPivot(['enrolled_at', 'completed_at']);
+    }
+
+    // Methods
     public function hasActiveSubscription()
     {
         return $this->subscriptions()
@@ -68,8 +86,11 @@ class User extends Authenticatable
             ->exists();
     }
 
-    public function certificates()
+    public function getTotalStudentsAttribute()
     {
-        return $this->hasMany(Certificate::class);
+        return $this->teacherCourses()
+            ->withCount('enrollments')
+            ->get()
+            ->sum('enrollments_count');
     }
 }

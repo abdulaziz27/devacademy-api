@@ -45,4 +45,16 @@ class Course extends Model
     {
         return $this->hasMany(Enrollment::class);
     }
+
+    public function getStudentCountAttribute()
+    {
+        return $this->enrollments()->count();
+    }
+
+    public function getCompletionsCountAttribute()
+    {
+        return $this->enrollments()
+            ->whereNotNull('completed_at')
+            ->count();
+    }
 }

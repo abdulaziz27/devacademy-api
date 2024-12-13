@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CertificateController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ProgressController;
 use App\Http\Controllers\StudentDashboardController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\TeacherDashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -61,6 +63,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/test/midtrans-signature', [SubscriptionController::class, 'generateTestSignature']);
     }
 
+    // Teacher Routes
+    Route::middleware(['role:teacher'])->group(function () {
+        Route::get('/teacher/dashboard', [TeacherDashboardController::class, 'index']);
+    });
+
     // Admin routes
     Route::middleware('role:admin')->group(function () {
         Route::get('/users', [AdminController::class, 'getAllUsers']);
@@ -71,6 +78,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/categories', [CategoryController::class, 'store']);
         Route::post('/categories/{category:slug}/update', [CategoryController::class, 'update']);
         Route::delete('/categories/{category:slug}', [CategoryController::class, 'destroy']);
+
+        Route::get('/admin/dashboard', [AdminDashboardController::class, 'index']);
     });
 
     // Admin and Teacher Routes
