@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AssignmentController;
+use App\Http\Controllers\AssignmentSubmissionController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CertificateController;
@@ -54,9 +56,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/certificates', [CertificateController::class, 'index']);
     Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download']);
 
+    // Student Assigments
+    Route::get('/courses/{course:slug}/assignments', [AssignmentController::class, 'index']);
+    Route::post('/assignments/{assignment}/submit', [AssignmentSubmissionController::class, 'store']);
+
     // Student Dashboard
     Route::get('/student/dashboard', [StudentDashboardController::class, 'index']);
     Route::get('/student/courses/{course:slug}/progress', [StudentDashboardController::class, 'courseProgress']);
+
+    // Student & Teacher can view assignments
+    Route::get('/courses/{course:slug}/assignments', [AssignmentController::class, 'index']);
+    Route::get('/courses/{course:slug}/assignments/{assignment}', [AssignmentController::class, 'show']);
+
+    // Student submission routes
+    Route::post('/assignments/{assignment}/submit', [AssignmentSubmissionController::class, 'store']);
 
     // Route Testing
     if (app()->environment('local')) {
@@ -66,6 +79,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Teacher Routes
     Route::middleware(['role:teacher'])->group(function () {
         Route::get('/teacher/dashboard', [TeacherDashboardController::class, 'index']);
+
+        Route::post('/courses/{course:slug}/assignments', [AssignmentController::class, 'store']);
+        Route::get('/assignments/{assignment}/submissions', [AssignmentController::class, 'submissions']);
+        Route::post('/assignments/{assignment}/submissions/{submission}/grade', [AssignmentSubmissionController::class, 'grade']);
     });
 
     // Admin routes
@@ -95,5 +112,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('courses.lessons', LessonController::class)
             ->except(['index', 'show'])
             ->scoped(['course' => 'slug']);
+
+
+        Route::post('/courses/{course:slug}/assignments', [AssignmentController::class, 'store']);
+        Route::post('/courses/{course:slug}/assignments/{assignment}/update', [AssignmentController::class, 'update']);
+        Route::delete('/courses/{course:slug}/assignments/{assignment}', [AssignmentController::class, 'destroy']);
+        Route::get('/assignments/{assignment}/submissions', [AssignmentController::class, 'submissions']);
+        Route::post('/assignments/{assignment}/submissions/{submission}/grade', [AssignmentSubmissionController::class, 'grade']);
     });
 });

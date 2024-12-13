@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
             LessonSeeder::class,
             EnrollmentSeeder::class,
             UserSubscriptionSeeder::class,
-            SubscriptionPlanSeeder::class
+            SubscriptionPlanSeeder::class,
+            AssignmentSeeder::class,
         ]);
     }
 }

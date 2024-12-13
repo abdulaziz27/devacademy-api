@@ -57,4 +57,9 @@ class Course extends Model
             ->whereNotNull('completed_at')
             ->count();
     }
+
+    public function assignments()
+    {
+        return $this->hasMany(Assignment::class);
+    }
 }
