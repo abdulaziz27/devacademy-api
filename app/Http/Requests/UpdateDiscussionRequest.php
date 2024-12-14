@@ -16,7 +16,7 @@ class UpdateDiscussionRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'image' => 'nullable|image|max:5120'
+            'image' => 'nullable|file|mimes:jpg,jpeg,png|max:10240'
         ];
     }
 }

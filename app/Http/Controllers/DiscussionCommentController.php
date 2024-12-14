@@ -10,6 +10,17 @@ use App\Http\Requests\UpdateDiscussionCommentRequest;
 
 class DiscussionCommentController extends Controller
 {
+    public function index(Discussion $discussion)
+    {
+        $comments = $discussion->comments()
+            ->with('user')
+            ->latest()
+            ->get();
+
+        return DiscussionCommentResource::collection($comments);
+    }
+
+
     public function store(StoreDiscussionCommentRequest $request, Discussion $discussion)
     {
         $comment = $discussion->comments()->create([

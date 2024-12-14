@@ -62,6 +62,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/discussions', DiscussionController::class);
 
     // Discussion Comments Routes
+    Route::get('/discussions/{discussion}/comments', [DiscussionCommentController::class, 'index']);
+
     Route::post('/discussions/{discussion}/comments', [DiscussionCommentController::class, 'store']);
     Route::put('/comments/{comment}', [DiscussionCommentController::class, 'update']);
     Route::delete('/comments/{comment}', [DiscussionCommentController::class, 'destroy']);
