@@ -128,4 +128,18 @@ class AuthController extends Controller
             'user' => new UserResource($user->fresh())
         ]);
     }
+
+    public function checkSubscriptionStatus()
+    {
+        $user = auth()->user();
+
+        return response()->json([
+            'is_subscribed' => $user->hasActiveSubscription(),
+            'subscription' => $user->subscriptions()
+                ->where('end_date', '>', now())
+                ->where('is_active', true)
+                ->first()?->only(['start_date', 'end_date']),
+            'can_access_premium' => $user->hasActiveSubscription()
+        ]);
+    }
 }

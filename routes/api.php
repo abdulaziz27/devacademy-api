@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [AuthController::class, 'profile']);
     // Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::post('/profile/update', [AuthController::class, 'updateProfile']);
+    Route::get('/subscription/status', [AuthController::class, 'checkSubscriptionStatus']);
 
     Route::get('/courses/{course:slug}/lessons', [LessonController::class, 'index']);
     Route::get('/courses/{course:slug}/lessons/{lesson}', [LessonController::class, 'show']);
