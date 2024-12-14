@@ -14,7 +14,7 @@ class StoreSubmissionRequest extends FormRequest
     {
         return [
             'content' => 'required|string',
-            'file' => 'nullable|file|max:10240' // 10MB max
+            'file_url' => 'nullable|file|mimes:pdf,jpeg,png,docx|max:10240' // 10MB max
         ];
     }
 }

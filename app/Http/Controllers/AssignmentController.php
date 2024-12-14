@@ -27,7 +27,9 @@ class AssignmentController extends Controller
 
     public function show(Course $course, Assignment $assignment)
     {
-        return new AssignmentResource($assignment->load(['submissions.user']));
+        return new AssignmentResource($assignment->load(['submissions' => function ($query) {
+            $query->where('user_id', auth()->id());
+        }]));
     }
 
     public function update(UpdateAssignmentRequest $request, Course $course, Assignment $assignment)
@@ -42,8 +44,12 @@ class AssignmentController extends Controller
         return response()->json(['message' => 'Assignment deleted successfully']);
     }
 
-    public function submissions(Assignment $assignment)
+    public function submissions(Course $course, Assignment $assignment)
     {
+        if ($course->teacher_id !== auth()->id() && !$assignment->submissions->contains('user_id', auth()->id())) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
         return AssignmentSubmissionResource::collection(
             $assignment->submissions()->with('user')->get()
         );

@@ -26,7 +26,7 @@ class LessonSeeder extends Seeder
                     'title' => "Lesson {$i}: " . fake()->sentence(),
                     'type' => $type,
                     'content' => fake()->paragraphs(3, true),
-                    'video_url' => $type !== 'text' ? "lessons/video{$i}.mp4" : null,
+                    'video_url' => $type !== 'text' ? "lessons/https://www.youtube.com/watch?v=3iM_06QeZi8" : null,
                     'duration' => $type !== 'text' ? rand(15, 60) : null,
                     'order' => $i,
                     'course_id' => $course->id

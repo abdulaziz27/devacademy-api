@@ -7,11 +7,12 @@ use App\Http\Requests\Submission\StoreSubmissionRequest;
 use App\Http\Resources\AssignmentSubmissionResource;
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
+use App\Models\Course;
 use Illuminate\Http\Request;
 
 class AssignmentSubmissionController extends Controller
 {
-    public function store(StoreSubmissionRequest $request, Assignment $assignment)
+    public function store(StoreSubmissionRequest $request, Course $course, Assignment $assignment)
     {
         // Check if student is enrolled
         if (!auth()->user()->enrollments()->where('course_id', $assignment->course_id)->exists()) {
@@ -20,8 +21,8 @@ class AssignmentSubmissionController extends Controller
 
         $validated = $request->validated();
 
-        if ($request->hasFile('file')) {
-            $validated['file_url'] = $request->file('file')->store('submissions', 'public');
+        if ($request->hasFile('file_url')) {
+            $validated['file_url'] = $request->file('file_url')->store('submissions', 'public');
         }
 
         $submission = AssignmentSubmission::create([

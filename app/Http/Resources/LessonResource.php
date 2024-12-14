@@ -18,11 +18,8 @@ class LessonResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'type' => $this->type,
-            'content' => $this->when($request->user()?->can('view', $this->resource), $this->content),
-            'video_url' => $this->when(
-                $request->user()?->can('view', $this->resource),
-                $this->video_url ? asset('storage/' . $this->video_url) : null
-            ),
+            'content' => $this->content,
+            'video_url' => $this->video_url ? asset('storage/' . $this->video_url) : null,
             'duration' => $this->duration,
             'order' => $this->order
         ];

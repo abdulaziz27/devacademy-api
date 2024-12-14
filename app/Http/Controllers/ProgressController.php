@@ -40,7 +40,10 @@ class ProgressController extends Controller
             ]
         );
 
-        return response()->json(['message' => 'Lesson marked as complete']);
+        return response()->json([
+            'message' => 'Lesson marked as complete',
+            'progress' => new LessonProgressResource($progress)
+        ]);
     }
 
     public function getCourseProgress(Course $course)

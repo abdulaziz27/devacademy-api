@@ -38,7 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/subscription/status', [AuthController::class, 'checkSubscriptionStatus']);
 
     Route::get('/courses/{course:slug}/lessons', [LessonController::class, 'index']);
-    Route::get('/courses/{course:slug}/lessons/{lesson}', [LessonController::class, 'show']);
+
 
 
     Route::post('/courses/{course:slug}/enroll', [EnrollmentController::class, 'enroll']);
@@ -46,10 +46,26 @@ Route::middleware('auth:sanctum')->group(function () {
     // Route::post('/lessons/{lesson}/complete', [ProgressController::class, 'markAsComplete']);
     Route::get('/courses/{course:slug}/progress', [ProgressController::class, 'getCourseProgress']);
 
-    Route::post('/lessons/{lesson}/complete', [ProgressController::class, 'markAsComplete'])
-        ->middleware('enrolled');
 
+    // Get Lesson Details
+    Route::get('/courses/{course:slug}/lessons/{lesson}', [LessonController::class, 'show']);
+
+    // Mark Lesson Complete
+    Route::post('/courses/{course:slug}/lessons/{lesson}/complete', [ProgressController::class, 'markAsComplete'])->middleware('enrolled');
+
+    // Make Subscription
     Route::post('/subscription/subscribe/{plan}', [SubscriptionController::class, 'subscribe']);
+
+
+
+    // Submit Assignment
+    // Route::post('/courses/{course:slug}/assignments/{assignment}/submit', [AssignmentSubmissionController::class, 'store']);
+
+    // Get Assignment Submissions (Teacher only)
+    Route::middleware('role:teacher')->get(
+        '/courses/{course:slug}/assignments/{assignment}/submissions',
+        [AssignmentController::class, 'submissions']
+    );
 
 
     // Course Completion and Download Certificate
@@ -58,8 +74,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/certificates/{certificate}/download', [CertificateController::class, 'download']);
 
     // Student Assigments
+
+    // Get All Assignments
     Route::get('/courses/{course:slug}/assignments', [AssignmentController::class, 'index']);
-    Route::post('/assignments/{assignment}/submit', [AssignmentSubmissionController::class, 'store']);
+
+    // Get Assignment Details
+    Route::get('/courses/{course:slug}/assignments/{assignment}', [AssignmentController::class, 'show']);
+
+    // Submit Assignment
+    Route::post('/courses/{course:slug}/assignments/{assignment}/submit', [AssignmentSubmissionController::class, 'store']);
+
 
     // Student Dashboard
     Route::get('/student/dashboard', [StudentDashboardController::class, 'index']);
@@ -67,10 +91,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Student & Teacher can view assignments
     Route::get('/courses/{course:slug}/assignments', [AssignmentController::class, 'index']);
-    Route::get('/courses/{course:slug}/assignments/{assignment}', [AssignmentController::class, 'show']);
 
     // Student submission routes
-    Route::post('/assignments/{assignment}/submit', [AssignmentSubmissionController::class, 'store']);
+    // Route::post('/assignments/{assignment}/submit', [AssignmentSubmissionController::class, 'store']);
+
+    // Get Assignment Submissions (Teacher only)
+    Route::get('/courses/{course:slug}/assignments/{assignment}/submissions', [AssignmentController::class, 'submissions']);
 
     // Route Testing
     if (app()->environment('local')) {
@@ -82,7 +108,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/teacher/dashboard', [TeacherDashboardController::class, 'index']);
 
         Route::post('/courses/{course:slug}/assignments', [AssignmentController::class, 'store']);
-        Route::get('/assignments/{assignment}/submissions', [AssignmentController::class, 'submissions']);
+
+
         Route::post('/assignments/{assignment}/submissions/{submission}/grade', [AssignmentSubmissionController::class, 'grade']);
     });
 
