@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained()->onDelete('cascade');
             $table->timestamp('enrolled_at');
             $table->timestamp('completed_at')->nullable();
+            $table->boolean('is_enrolled')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });

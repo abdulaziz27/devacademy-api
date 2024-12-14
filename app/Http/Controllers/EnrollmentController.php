@@ -27,7 +27,8 @@ class EnrollmentController extends Controller
         $enrollment = Enrollment::create([
             'user_id' => auth()->id(),
             'course_id' => $course->id,
-            'enrolled_at' => now()
+            'enrolled_at' => now(),
+            'is_enrolled' => true
         ]);
 
         return new EnrollmentResource($enrollment);
@@ -35,7 +36,11 @@ class EnrollmentController extends Controller
 
     public function myCourses()
     {
-        $enrollments = auth()->user()->enrollments()->with('course')->get();
+        $enrollments = auth()->user()->enrollments()
+            ->with('course')
+            ->latest('enrolled_at')
+            ->get()
+            ->unique('course_id');
         return EnrollmentResource::collection($enrollments);
     }
 

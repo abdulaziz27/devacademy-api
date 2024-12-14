@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'enrolled' => \App\Http\Middleware\EnrolledMiddleware::class,
+            'auth.optional' => \App\Http\Middleware\OptionalAuthSanctum::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

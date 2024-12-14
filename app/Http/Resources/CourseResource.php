@@ -7,14 +7,9 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CourseResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
     public function toArray($request): array
     {
-        return [
+        $data = [
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
@@ -30,5 +25,15 @@ class CourseResource extends JsonResource
             }),
             'created_at' => $this->created_at
         ];
+
+        if (isset($this->additional['is_enrolled'])) {
+            $data['is_enrolled'] = $this->additional['is_enrolled'];
+        }
+
+        if (isset($this->additional['user_type'])) {
+            $data['user_type'] = $this->additional['user_type'];
+        }
+
+        return $data;
     }
 }

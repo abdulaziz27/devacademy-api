@@ -47,10 +47,32 @@ class CourseController extends Controller
         return new CourseResource($course->load(['teacher', 'category']));
     }
 
-    public function show(Course $course)
+    public function show(Course $course, Request $request)
     {
         $course->load(['teacher', 'category', 'lessons']);
-        return new CourseResource($course);
+
+        $isEnrolled = false;
+        $userType = 'guest';
+
+        if ($request->user()) {
+            $userType = 'authenticated';
+            $isEnrolled = $course->enrollments()
+                ->where('user_id', $request->user()->id)
+                ->where('is_enrolled', true)
+                ->exists();
+        }
+
+        \Log::info('Course detail access', [
+            'user' => $request->user(),
+            'is_authenticated' => auth()->check(),
+            'user_type' => $userType,
+            'is_enrolled' => $isEnrolled,
+        ]);
+
+        return (new CourseResource($course))->additional([
+            'is_enrolled' => $isEnrolled,
+            'user_type' => $userType
+        ]);
     }
 
     public function update(UpdateCourseRequest $request, Course $course)

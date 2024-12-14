@@ -14,6 +14,7 @@ class EnrollmentResource extends JsonResource
             'course' => new CourseResource($this->whenLoaded('course')),
             'enrolled_at' => $this->enrolled_at,
             'completed_at' => $this->completed_at,
+            'is_enrolled' => (bool) $this->is_enrolled,
             'progress' => [
                 'total_lessons' => $this->whenLoaded('course', function () {
                     return $this->course->lessons->count();

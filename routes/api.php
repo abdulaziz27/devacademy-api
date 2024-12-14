@@ -25,7 +25,7 @@ Route::get('/categories/{category:slug}', [CategoryController::class, 'show']);
 Route::get('/subscription/plans', [SubscriptionController::class, 'plans']);
 Route::post('/subscription/callback', [SubscriptionController::class, 'handleCallback']);
 Route::get('/courses', [CourseController::class, 'index']);
-Route::get('/courses/{course:slug}', [CourseController::class, 'show']);
+Route::get('/courses/{course:slug}', [CourseController::class, 'show'])->middleware('auth.optional');
 
 
 

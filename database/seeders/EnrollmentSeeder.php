@@ -18,7 +18,8 @@ class EnrollmentSeeder extends Seeder
         Enrollment::create([
             'user_id' => $student->id,
             'course_id' => $course->id,
-            'enrolled_at' => now()
+            'enrolled_at' => now(),
+            'is_enrolled' => true
         ]);
     }
 }
