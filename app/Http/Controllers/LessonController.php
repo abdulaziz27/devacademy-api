@@ -23,8 +23,8 @@ class LessonController extends Controller
         $validated = $request->validated();
         $validated['course_id'] = $course->id;
 
-        if ($request->hasFile('video')) {
-            $validated['video_url'] = $request->file('video')->store('lessons', 'public');
+        if ($request->has('video_url')) {
+            $validated['video_url'] = $request->video_url;  // Simpan URL eksternal
         }
 
         $lesson = Lesson::create($validated);
@@ -43,11 +43,8 @@ class LessonController extends Controller
     {
         $validated = $request->validated();
 
-        if ($request->hasFile('video')) {
-            if ($lesson->video_url) {
-                Storage::disk('public')->delete($lesson->video_url);
-            }
-            $validated['video_url'] = $request->file('video')->store('lessons', 'public');
+        if ($request->has('video_url')) {
+            $validated['video_url'] = $request->video_url;  // Update dengan URL baru
         }
 
         $lesson->update($validated);
@@ -56,9 +53,6 @@ class LessonController extends Controller
 
     public function destroy(Course $course, Lesson $lesson)
     {
-        if ($lesson->video_url) {
-            Storage::disk('public')->delete($lesson->video_url);
-        }
         $lesson->delete();
         return response()->json(['message' => 'Lesson deleted successfully']);
     }

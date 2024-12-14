@@ -19,7 +19,7 @@ class LessonResource extends JsonResource
             'title' => $this->title,
             'type' => $this->type,
             'content' => $this->content,
-            'video_url' => $this->video_url ? asset('storage/' . $this->video_url) : null,
+            'video_url' => $this->video_url,
             'duration' => $this->duration,
             'order' => $this->order
         ];
