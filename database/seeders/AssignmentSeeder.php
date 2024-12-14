@@ -22,7 +22,7 @@ class AssignmentSeeder extends Seeder
                 Assignment::create([
                     'course_id' => $course->id,
                     'title' => "Assignment {$i}: " . fake()->sentence(),
-                    'description' => fake()->paragraphs(2, true),
+                    'description' => fake()->paragraphs(1, true),
                     'due_date' => now()->addDays(rand(7, 30))
                 ]);
             }

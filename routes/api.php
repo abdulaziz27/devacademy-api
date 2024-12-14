@@ -8,6 +8,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CourseController;
+use App\Http\Controllers\DiscussionCommentController;
+use App\Http\Controllers\DiscussionController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\ProgressController;
@@ -56,7 +58,13 @@ Route::middleware('auth:sanctum')->group(function () {
     // Make Subscription
     Route::post('/subscription/subscribe/{plan}', [SubscriptionController::class, 'subscribe']);
 
+    // Discussion Routes
+    Route::apiResource('/discussions', DiscussionController::class);
 
+    // Discussion Comments Routes
+    Route::post('/discussions/{discussion}/comments', [DiscussionCommentController::class, 'store']);
+    Route::put('/comments/{comment}', [DiscussionCommentController::class, 'update']);
+    Route::delete('/comments/{comment}', [DiscussionCommentController::class, 'destroy']);
 
     // Submit Assignment
     // Route::post('/courses/{course:slug}/assignments/{assignment}/submit', [AssignmentSubmissionController::class, 'store']);
