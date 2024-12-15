@@ -71,6 +71,27 @@ class SubscriptionController extends Controller
 
     public function handleCallback(Request $request)
     {
+        if (app()->environment('local')) {
+            // In test mode, skip signature validation
+            $transaction = SubscriptionTransaction::where('order_id', $request->order_id)->firstOrFail();
+
+            // Auto update to settlement
+            $transaction->update([
+                'status' => 'settlement',
+                'payment_details' => $request->all()
+            ]);
+
+            // Create active subscription
+            UserSubscription::create([
+                'user_id' => $transaction->user_id,
+                'start_date' => now(),
+                'end_date' => now()->addDays($transaction->plan->duration_in_days),
+                'is_active' => true
+            ]);
+
+            return response()->json(['message' => 'Payment completed successfully']);
+        }
+
         $serverKey = config('services.midtrans.server_key');
         $hashed = hash('sha512', $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
 

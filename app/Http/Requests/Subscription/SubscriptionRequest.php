@@ -14,7 +14,7 @@ class SubscriptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'payment_type' => 'required|string|in:bank_transfer,credit_card,gopay'
+            'payment_type' => ['nullable', 'string', 'in:bank_transfer,credit_card,gopay,other_valid_types'],
         ];
     }
 }
