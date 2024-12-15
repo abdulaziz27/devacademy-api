@@ -67,16 +67,27 @@ class AuthController extends Controller
                 return response()->json(['error' => 'Invalid token'], 401);
             }
 
-            $user = User::updateOrCreate(
-                ['email' => $payload['email']],
+            // Ambil data dari payload
+            $email = $payload['email'];
+            $avatarUrl = $payload['picture'];
+            $name = $payload['name'];
+
+            // Cari pengguna berdasarkan email, atau buat pengguna baru jika tidak ada
+            $user = User::firstOrCreate(
+                ['email' => $email], // Cari berdasarkan email
                 [
-                    'name' => $payload['name'],
-                    'avatar' => $payload['picture'] ?? null,
-                    'password' => Hash::make(Str::random(24))
+                    'name' => $name,
+                    'avatar' => $avatarUrl,
+                    'password' => Hash::make(Str::random(24)), // Set password acak
                 ]
             );
 
-            $user->assignRole('student');
+            // Assign role 'student' jika belum
+            if (!$user->hasRole('student')) {
+                $user->assignRole('student');
+            }
+
+            // Buat token untuk pengguna
             $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
@@ -88,6 +99,8 @@ class AuthController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+
 
     public function logout(Request $request)
     {

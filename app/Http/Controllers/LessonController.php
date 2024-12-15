@@ -6,6 +6,7 @@ use App\Http\Requests\Lesson\LessonRequest;
 use App\Http\Resources\LessonResource;
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\LessonProgress;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
@@ -36,7 +37,18 @@ class LessonController extends Controller
 
     public function show(Course $course, Lesson $lesson)
     {
-        return new LessonResource($lesson);
+        $userId = auth()->id();
+
+        $lessonProgress = LessonProgress::where('user_id', $userId)
+            ->where('lesson_id', $lesson->id)
+            ->first();
+
+        $isCompleted = $lessonProgress ? $lessonProgress->is_completed : false;
+
+        return response()->json([
+            'lesson' => new LessonResource($lesson),
+            'is_completed' => $isCompleted,
+        ]);
     }
 
     public function update(LessonRequest $request, Course $course, Lesson $lesson)

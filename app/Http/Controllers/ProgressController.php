@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LessonProgressResource;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\LessonProgress;
@@ -9,7 +10,7 @@ use Illuminate\Http\Request;
 
 class ProgressController extends Controller
 {
-    public function markAsComplete(Lesson $lesson)
+    public function markAsComplete(Course $course, Lesson $lesson)
     {
         // Check if course is premium and user has subscription
         if ($lesson->course->is_premium && !auth()->user()->hasActiveSubscription()) {

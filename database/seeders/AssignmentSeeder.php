@@ -15,17 +15,19 @@ class AssignmentSeeder extends Seeder
     {
         $courses = Course::all();
 
-        foreach ($courses as $course) {
-            $assignmentCount = rand(1, 2);
+        // Static assignments titles and descriptions (disesuaikan untuk semua kursus)
+        $defaultAssignmentTitle = 'Assignment: Course Completion';
+        $defaultAssignmentDescription = 'Complete the exercises and submit your solution for evaluation.';
+        $defaultDueDateRange = [7, 30]; // Due date within 7 to 30 days
 
-            for ($i = 1; $i <= $assignmentCount; $i++) {
-                Assignment::create([
-                    'course_id' => $course->id,
-                    'title' => "Assignment {$i}: " . fake()->sentence(),
-                    'description' => fake()->paragraphs(1, true),
-                    'due_date' => now()->addDays(rand(7, 30))
-                ]);
-            }
+        foreach ($courses as $course) {
+            // Create one assignment for each course
+            Assignment::create([
+                'course_id' => $course->id,
+                'title' => $defaultAssignmentTitle,
+                'description' => $defaultAssignmentDescription,
+                'due_date' => now()->addDays(rand($defaultDueDateRange[0], $defaultDueDateRange[1]))
+            ]);
         }
 
         // Create some sample submissions
@@ -33,19 +35,23 @@ class AssignmentSeeder extends Seeder
         $assignments = Assignment::all();
 
         foreach ($students as $student) {
-            // Submit to random assignments
-            $randomAssignments = $assignments->random(3);
+            // Find assignments related to the courses the student is enrolled in
+            $studentAssignments = $assignments->filter(function ($assignment) use ($student) {
+                return $student->enrollments()->where('course_id', $assignment->course_id)->exists();
+            });
 
-            foreach ($randomAssignments as $assignment) {
-                if ($student->enrollments()->where('course_id', $assignment->course_id)->exists()) {
-                    AssignmentSubmission::create([
-                        'assignment_id' => $assignment->id,
-                        'user_id' => $student->id,
-                        'content' => fake()->paragraphs(3, true),
-                        'score' => rand(60, 100),
-                        'feedback' => fake()->sentence()
-                    ]);
-                }
+            if ($studentAssignments->isNotEmpty()) {
+                // Select one random assignment from the student's assignments
+                $randomAssignment = $studentAssignments->random(1)->first();
+
+                // Create submission for the selected assignment
+                AssignmentSubmission::create([
+                    'assignment_id' => $randomAssignment->id,
+                    'user_id' => $student->id,
+                    'content' => 'I have completed the assignment according to the instructions, and I believe the solution works as expected.',
+                    'score' => rand(60, 100),
+                    'feedback' => 'Good job! Please review the sections on error handling and optimization.'
+                ]);
             }
         }
     }

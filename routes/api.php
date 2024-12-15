@@ -72,7 +72,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Route::post('/courses/{course:slug}/assignments/{assignment}/submit', [AssignmentSubmissionController::class, 'store']);
 
     // Get Assignment Submissions (Teacher only)
-    Route::middleware('role:teacher')->get(
+    Route::get(
         '/courses/{course:slug}/assignments/{assignment}/submissions',
         [AssignmentController::class, 'submissions']
     );
